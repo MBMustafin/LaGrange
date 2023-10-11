@@ -18,6 +18,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
 import drawing.CartesianPainter
+import drawing.convertation.Plane
 import kotlin.random.Random
 
 object Params{
@@ -33,11 +34,14 @@ object Params{
 fun App() {
     var text by remember { mutableStateOf("Hello, World!") }
     val p = CartesianPainter()
+    p.plane = Plane(-5.0,10.0,-10.0,4.0, 0f,0f )
     MaterialTheme {
 
         Column() {
             Box(Modifier.fillMaxWidth().fillMaxHeight(0.9f)) {
                 Canvas(Modifier.fillMaxSize()) {
+                    p.plane?.width = size.width
+                    p.plane?.height = size.height
                     p.paint(this)
                 }
             }
