@@ -21,8 +21,8 @@ open class CartesianPainter : Painter {
             val x0 = Converter.xCrt2Scr(0.0, plane)
             val y0 = Converter.yCrt2Scr(0.0,plane)
             scope.apply {
-                drawLine(Color.Black, Offset(0f, y0.toFloat()), Offset(size.width, y0.toFloat()), 1f)
-                drawLine(Color.Black, Offset(x0.toFloat(), 0f), Offset(x0.toFloat(),size.height), 1f)
+                drawLine(Color.Black, Offset(0f, y0), Offset(size.width, y0), 1f)
+                drawLine(Color.Black, Offset(x0, 0f), Offset(x0,size.height), 1f)
             }
         }
     }

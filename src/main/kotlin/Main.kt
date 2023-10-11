@@ -45,8 +45,9 @@ fun App() {
                     p.paint(this)
                 }
             }
-            Box(Modifier.background(Color.Gray).fillMaxWidth()) {
-                Column(Modifier.fillMaxWidth()) {
+            Box(Modifier.background(Color.Gray).fillMaxSize()) {
+                Column(Modifier.fillMaxSize(),
+                    verticalArrangement = Arrangement.Center) {
                     Button(onClick = {
                         //Params.color=Color(Random.nextFloat(), Random.nextFloat(), Random.nextFloat())
                     }, Modifier.align(Alignment.CenterHorizontally)) {
