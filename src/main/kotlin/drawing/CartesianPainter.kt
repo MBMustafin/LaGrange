@@ -1,0 +1,4 @@
+package drawing
+
+class CartesianPainter {
+}
