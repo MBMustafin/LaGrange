@@ -1,15 +1,19 @@
 package drawing
 
 import androidx.compose.foundation.pager.PageSize
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.DrawStyle
 import androidx.compose.ui.graphics.drawscope.Fill
+import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
+import androidx.compose.ui.graphics.nativeCanvas
+import androidx.compose.ui.text.*
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.Density
+import androidx.compose.ui.unit.sp
 import drawing.convertation.Converter
 import drawing.convertation.Plane
 import kotlin.math.roundToInt
@@ -24,11 +28,12 @@ open class CartesianPainter : Painter {
     }
 
     var plane: Plane? = null
+    @OptIn(ExperimentalTextApi::class)
+    var textMeasurer: TextMeasurer? = null
 
     override fun paint(scope: DrawScope){
         paintAxis(scope)
         paintTics(scope)
-        paintLabels(scope)
     }
 
     fun paintAxis(scope: DrawScope){
@@ -42,8 +47,25 @@ open class CartesianPainter : Painter {
         }
     }
 
-    fun paintLabels(scope: DrawScope){}
+    @OptIn(ExperimentalTextApi::class)
+    fun paintXLabel(scope: DrawScope, value: Double){
+        scope.apply {
+            textMeasurer?.let {
+                val text = it.measure(
+                    value.toString(),
+                    TextStyle(color = ACCENT_COLOR2, fontSize = 14.sp, fontWeight = FontWeight.Bold)
+                )
+                plane?.let { plane ->
+                    val y = Converter.yCrt2Scr(0.0, plane) + text.size.height
+                    val x = Converter.xCrt2Scr(value, plane) - text.size.width / 2
+                    drawText(text, topLeft = Offset(x, y))
+                }
+            }
+        }
 
+    }
+
+    @OptIn(ExperimentalTextApi::class)
     fun paintTics(scope: DrawScope){
         plane?.let {
             val step = 0.1
@@ -56,7 +78,11 @@ open class CartesianPainter : Painter {
                 scope.apply {
                     when{
                         (x * 10).roundToInt() == 0 -> color = TRANSPARENT_COLOR
-                        (x * 10).roundToInt() % 10 == 0 -> { h += 10f; color = ACCENT_COLOR2 }
+                        (x * 10).roundToInt() % 10 == 0 -> {
+                            h += 10f
+                            color = ACCENT_COLOR2
+                            paintXLabel(this, (x * 10).roundToInt() / 10.0)
+                        }
                         (x * 10).roundToInt() % 5 == 0 -> { h += 4f; color = ACCENT_COLOR1 }
                     }
                     drawLine(color, Offset(xPos, y0 + h), Offset (xPos, y0-h), 1f)

@@ -19,6 +19,8 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalViewConfiguration
+import androidx.compose.ui.text.ExperimentalTextApi
+import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Window
@@ -37,12 +39,14 @@ object Params{
         get() = _color.value
 }
 
+@OptIn(ExperimentalTextApi::class)
 @Composable
 @Preview
 fun App() {
     var text by remember { mutableStateOf("Hello, World!") }
     val p = CartesianPainter()
     p.plane = Plane(-5.0,10.0,-10.0,4.0, 0f,0f )
+    p.textMeasurer = rememberTextMeasurer()
     MaterialTheme {
         Box(Modifier.background(Color.Blue).fillMaxSize()) {
             Column(
