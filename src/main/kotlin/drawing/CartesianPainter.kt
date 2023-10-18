@@ -1,18 +1,10 @@
 package drawing
 
-import androidx.compose.foundation.pager.PageSize
-import androidx.compose.runtime.*
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.DrawScope
-import androidx.compose.ui.graphics.drawscope.DrawStyle
-import androidx.compose.ui.graphics.drawscope.Fill
-import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
-import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.text.*
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.sp
 import drawing.convertation.Converter
 import drawing.convertation.Plane
@@ -33,7 +25,7 @@ open class CartesianPainter : Painter {
 
     override fun paint(scope: DrawScope){
         paintAxis(scope)
-        paintTics(scope)
+        paintXTics(scope)
     }
 
     fun paintAxis(scope: DrawScope){
@@ -53,20 +45,18 @@ open class CartesianPainter : Painter {
             textMeasurer?.let {
                 val text = it.measure(
                     value.toString(),
-                    TextStyle(color = ACCENT_COLOR2, fontSize = 14.sp, fontWeight = FontWeight.Bold)
+                    TextStyle(color = ACCENT_COLOR2, fontSize = 12.sp, fontWeight = FontWeight.Bold)
                 )
                 plane?.let { plane ->
-                    val y = Converter.yCrt2Scr(0.0, plane) + text.size.height
+                    val y = Converter.yCrt2Scr(0.0, plane) + 12
                     val x = Converter.xCrt2Scr(value, plane) - text.size.width / 2
                     drawText(text, topLeft = Offset(x, y))
                 }
             }
         }
-
     }
 
-    @OptIn(ExperimentalTextApi::class)
-    fun paintTics(scope: DrawScope){
+    fun paintXTics(scope: DrawScope){
         plane?.let {
             val step = 0.1
             var x = (it.xMin / step).roundToInt() * step
