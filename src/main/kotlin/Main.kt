@@ -57,7 +57,9 @@ fun App() {
                     p.plane?.height = size.height
                     p.paint(this)
                 }
-                Column(Modifier.padding(top = 2.dp).fillMaxWidth().background(Color(1f, 1f, 1f, 0.9f))) {
+                Column(Modifier.padding(top = 2.dp).fillMaxWidth()
+                    .background(Color(1f, 1f, 1f, 0.9f))
+                ) {
                     Button(onClick = {
                     }, Modifier.align(Alignment.CenterHorizontally)) {
                         Text(text)
@@ -74,7 +76,6 @@ fun main() = application {
         onCloseRequest = ::exitApplication,
         state = WindowState(width = 600.dp, height = 500.dp)
     ) {
-        window.size = Dimension(1000, 200)
         App()
     }
 }
