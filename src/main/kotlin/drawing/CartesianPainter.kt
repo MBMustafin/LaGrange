@@ -20,6 +20,7 @@ open class CartesianPainter : Painter {
         val PRIMARY_COLOR = Color.Black
         val ACCENT_COLOR1 = Color.Blue
         val ACCENT_COLOR2 = Color.Red
+        val TRANSPARENT_COLOR = Color.Transparent
     }
 
     var plane: Plane? = null
@@ -54,9 +55,9 @@ open class CartesianPainter : Painter {
                 val xPos = Converter.xCrt2Scr(x, it)
                 scope.apply {
                     when{
-                        (x*10).roundToInt() % 10 == 0 -> { h += 10f; color = ACCENT_COLOR2 }
-                        (x*10).roundToInt() % 5 == 0 -> { h += 4f; color = ACCENT_COLOR1 }
-
+                        (x * 10).roundToInt() == 0 -> color = TRANSPARENT_COLOR
+                        (x * 10).roundToInt() % 10 == 0 -> { h += 10f; color = ACCENT_COLOR2 }
+                        (x * 10).roundToInt() % 5 == 0 -> { h += 4f; color = ACCENT_COLOR1 }
                     }
                     drawLine(color, Offset(xPos, y0 + h), Offset (xPos, y0-h), 1f)
                 }
