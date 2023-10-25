@@ -8,9 +8,7 @@ import drawing.convertation.Plane
 import ru.smak.math.polynomials.Polynomial
 
 class PolynomPainter(val p: Polynomial) : Painter {
-    companion object{
-        val PRIMARY_COLOR = Color.Black
-    }
+    var primaryColor = Color.Black
 
     var plane: Plane? = null
 
@@ -23,9 +21,10 @@ class PolynomPainter(val p: Polynomial) : Painter {
                 val y1 = p(x1)
                 val y2 = p(x2)
                 scope.drawLine(
-                    PRIMARY_COLOR,
+                    primaryColor,
                     Offset(i.toFloat(), Converter.yCrt2Scr(y1, it)),
-                    Offset((i+1).toFloat(), Converter.yCrt2Scr(y2, it))
+                    Offset((i+1).toFloat(), Converter.yCrt2Scr(y2, it)),
+                    strokeWidth = 3f
                 )
 
             }

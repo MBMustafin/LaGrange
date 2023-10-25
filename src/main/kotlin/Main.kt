@@ -4,14 +4,11 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
+import androidx.compose.material.ButtonDefaults.ContentPadding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowForward
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
@@ -39,6 +36,7 @@ object Params{
         get() = _color.value
 }
 
+
 @OptIn(ExperimentalTextApi::class)
 @Composable
 @Preview
@@ -53,6 +51,9 @@ fun App() {
     var yMin by mutableStateOf(cPainter.plane?.yMin.toString())
     var yMax by mutableStateOf(cPainter.plane?.yMax.toString())
     var pt by mutableStateOf<Pair<Float, Float>?>(null)
+    var redValue by mutableStateOf(0f)
+    var greenValue by mutableStateOf(0f)
+    var blueValue by mutableStateOf(0f)
     cPainter.textMeasurer = rememberTextMeasurer()
     MaterialTheme {
         Box(Modifier.background(Color.Blue).fillMaxSize()) {
@@ -80,14 +81,17 @@ fun App() {
                 Column(Modifier.padding(top = 2.dp).fillMaxWidth()
                     .background(Color(1f, 1f, 1f, 0.9f))
                 ) {
-                    Row(Modifier.fillMaxWidth().padding(4.dp), verticalAlignment = Alignment.CenterVertically){
+                    Row(Modifier.fillMaxWidth().padding(4.dp), verticalAlignment = Alignment.CenterVertically) {
                         Text("xMin: ")
                         OutlinedTextField(
                             value = xMin,
                             onValueChange = {
                                 xMin = it.filter { it in '0'..'9' || it in arrayOf('-', '+', '.') }
-                                with (it.toDoubleOrNull() ?: (cPainter.plane?.xMin ?: 0.0)){
-                                    cPainter.plane?.xMin = ((this*10).roundToInt()/10.0).coerceIn(-100.0,(cPainter.plane?.xMax ?: 0.0) - 0.1)
+                                with(it.toDoubleOrNull() ?: (cPainter.plane?.xMin ?: 0.0)) {
+                                    cPainter.plane?.xMin = ((this * 10).roundToInt() / 10.0).coerceIn(
+                                        -100.0,
+                                        (cPainter.plane?.xMax ?: 0.0) - 0.1
+                                    )
                                 }
                             },
                             Modifier.padding(end = 32.dp).weight(2f).background(Color.White).onFocusChanged {
@@ -100,8 +104,8 @@ fun App() {
                             value = xMax,
                             onValueChange = {
                                 xMax = it.filter { it in '0'..'9' || it in arrayOf('-', '+', '.') }
-                                with (it.toDoubleOrNull() ?: (cPainter.plane?.xMax ?: 0.0)) {
-                                    cPainter.plane?.xMax = (this*10).roundToInt()/10.0
+                                with(it.toDoubleOrNull() ?: (cPainter.plane?.xMax ?: 0.0)) {
+                                    cPainter.plane?.xMax = (this * 10).roundToInt() / 10.0
 
                                 }
                             },
@@ -109,7 +113,7 @@ fun App() {
                             singleLine = true,
                         )
                     }
-                    Row(Modifier.fillMaxWidth().padding(4.dp), verticalAlignment = Alignment.CenterVertically){
+                    Row(Modifier.fillMaxWidth().padding(4.dp), verticalAlignment = Alignment.CenterVertically) {
                         Text("yMin: ")
                         OutlinedTextField(
                             value = yMin,
@@ -125,7 +129,43 @@ fun App() {
                             singleLine = true,
                         )
                     }
-                    NumericUpDown(5.0, {}, Modifier.fillMaxWidth())
+                    Row {
+                        Slider(
+                            value = redValue, onValueChange = {
+                                redValue = it
+                                pPainter.primaryColor = Color(redValue, greenValue, blueValue)
+                            }, modifier = Modifier.weight(1f),
+                            colors = SliderDefaults.colors(
+                                activeTrackColor =
+                                Color(redValue, 0f, 0f)
+                            )
+                        )
+                        Slider(
+                            value = greenValue, onValueChange = {
+                                greenValue = it
+                                pPainter.primaryColor = Color(redValue, greenValue, blueValue)
+                            }, modifier = Modifier.weight(1f),
+                            colors = SliderDefaults.colors(
+                                activeTrackColor =
+                                Color(0f, greenValue, 0f)
+                            )
+                        )
+                        Slider(
+                            value = blueValue, onValueChange = {
+                                blueValue = it
+                                pPainter.primaryColor = Color(redValue, greenValue, blueValue)
+                            }, modifier = Modifier.weight(1f),
+                            colors = SliderDefaults.colors(
+                                activeTrackColor =
+                                Color(0f, 0f, blueValue)
+                            )
+                        )
+
+                    }
+                    Row {
+                        NumericUpDown(5.0, {}, modifier = Modifier.weight(1f))
+                        NumericUpDown(5.0, {}, modifier = Modifier.weight(1f))
+                    }
                 }
             }
         }
@@ -141,22 +181,16 @@ fun NumericUpDown(
     var tVal by remember { mutableStateOf(value.toString()) }
     Row(modifier, verticalAlignment = Alignment.CenterVertically) {
         IconButton(onClick = {
-
-        }){
-            Icon(imageVector = Icons.Default.ArrowBack, "Уменьшить")
+        }, modifier = Modifier.padding(0.dp).weight(1f)) {
+            Text("-")
         }
-        OutlinedTextField(tVal, onValueChange, Modifier.background(Color.White))
+        OutlinedTextField(tVal, onValueChange, Modifier.background(Color.White).weight(20f))
         IconButton(onClick = {
-            tVal = ((((tVal.toDoubleOrNull() ?: 0.0) + 0.1)*10.0).roundToInt()/10.0).toString()
-        }, modifier = Modifier.pointerInput(Unit){
-//            detectTapGestures(onLongPress = {
-//                tVal = ((((tVal.toDoubleOrNull() ?: 0.0) + 0.1)*10.0).roundToInt()/10.0).toString()
-//                Thread.sleep(100)
-//            })
-        }){
-            Icon(imageVector = Icons.Default.ArrowForward, "Увеличить")
+            tVal = ((((tVal.toDoubleOrNull() ?: 0.0) + 0.1) * 10.0).roundToInt() / 10.0).toString()
+        }, modifier = Modifier.pointerInput(Unit) {
+        }.fillMaxWidth().padding(0.dp).weight(1f)) {
+            Text("+")
         }
-
     }
 }
 
